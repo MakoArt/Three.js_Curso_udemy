@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+	
+	</head>
+	<body>
+		<script src="three.min.js"></script>
+        <script src="FirstPersonControls.js"></script>
+		<script>
+		
+		//Inicializar las variables 
+        let camara;
+		let escena;
+		let renderizado;
+		let clock;
+		let controls;
+		let clonado;
+
+		//Funcion inicializadora  
+
+		function inicializar(){
+			//creamos escena 
+			escena=new THREE.Scene();
+			//creamos camara de perspectiva 
+			camara=new THREE.PerspectiveCamera(80,window.innerWidth/window.innerHeight,1,10000)
+			camara.position.y=500;
+			camara.position.z=1500;
+			camara.rotation.x=-1*Math.PI/180 //me da un plano recto 
+
+			//creamos el render  
+
+			renderizado=new THREE.WebGLRenderer({antialias:true})//antialias para los bordes serrados 
+			renderizado.setSize(window.innerWidth,window.innerHeight)
+
+			//aplicamos las sombras 
+			renderizado.shadowMap.enabled=true //activar las sombras 
+			renderizado.shadowMap.soft=true;//quitar el borde aserrado de las sombras 
+            renderizado.setClearColor('orangered',1)
+
+			//controles en primera persona 
+			clock=new THREE.Clock();
+			controles=new THREE.FirstPersonControls(camara)
+			controles.movementSpeed=100;
+			controles.lookSpeed=0.1
+            //añadimos renderizado al documento
+			document.body.appendChild(renderizado.domElement)
+
+		}
+
+
+		//Creamos el suelo de nuestra escena  
+
+		function suelo(){
+			let geometriaSuelo=new THREE.BoxGeometry(2000,2000,1,20,20,1)
+			let materialSuelo=new THREE.MeshPhongMaterial({color:'brown'})
+			let sueloMalla=new THREE.Mesh(geometriaSuelo,materialSuelo)
+
+			sueloMalla.rotation.x=-90*Math.PI/180
+			sueloMalla.receiveShadow=true; 
+			escena.add(sueloMalla)
+		
+		
+		//crear la bolas en el espacio  
+
+		let geometria=new THREE.SphereGeometry()
+		     geometria.applyMatrix4(
+				 new THREE.Matrix4().makeTranslation(0,19,0)
+			 )
+
+		let material=new THREE.MeshPhongMaterial({color:'brown'})
+
+		for(let i=0;i<850;i++){
+			clonado=new THREE.Mesh(geometria.clone(),material.clone())
+			clonado.position.x=Math.round(Math.random()*500-200)*4 
+			clonado.position.z=Math.round(Math.random()*500-200)*4 
+			clonado.position.y=100
+
+			clonado.scale.x=Math.round(Math.random()*1 +18)
+			clonado.scale.y=Math.round(Math.random()*clonado.scale.x*1+9)
+			clonado.scale.z=clonado.scale.x
+            escena.add(clonado)
+			
+
+		}
+
+		//SOMBRAS Y LUCES  
+		 
+		let luces=new THREE.DirectionalLight('green',1)//(color,intensidad)
+            
+		  luces.castShadow=true //luz va a proyectar sombras
+		  luces.shadow.mapSize.width=3000//ancho de sombra
+		  luces.shadow.mapSize.height=3000//alto de sombra
+		  luces.position.set(500,1500,1000)//posicion 
+		  luces.shadow.camera.far=92500//alcanze de la sombra
+		  luces.shadow.camera.left=-2000
+		  luces.shadow.camera.right=2000
+		  luces.shadow.camera.top=1500
+		  luces.shadow.camera.bottom=-2000
+		  luces.shadow.darkness=0.2
+
+		  escena.add(luces)
+          
+		  let luzAmbiente=new THREE.AmbientLight('red',0.2)
+		  escena.add(luzAmbiente)
+		  escena.fog=new THREE.FogExp2('white',0.0004)
+
+          
+
+
+	}
+
+		function actualizar(){
+			suelo()
+
+			requestAnimationFrame(function animar(){
+                renderizado.render(escena,camara)
+				requestAnimationFrame(animar)
+                controles.update(clock.getDelta())
+			})
+		}
+		inicializar()
+		actualizar()
+
+	   
+		</script>
+	</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="./three.min.js"></script>
+    <script>
+
+    let camara;
+    let escena;
+    let renderizado;
+    let geometria;
+    let material; 
+    let malla;
+
+
+    function inicializa(){
+   
+     camara=new THREE.PerspectiveCamera(100,window.innerWidth/innerHeight,1,1500)
+     camara.position.set(0,0,300)
+   
+     escena=new THREE.Scene()
+     escena.add(camara)
+
+     //plano 
+     //parametros(ancho,alto)
+    //  geometria=new THREE.PlaneGeometry(300,300)
+
+    //circulo
+    //parametros(radio,nºlados)
+    // geometria=new THREE.CircleGeometry(200,59)
+
+   //anillo 
+   //parametros(radio interior,radio exterior,numeroLados)
+   geometria=new THREE.RingGeometry(150,250,30)
+
+ //lineas 
+ //debemos poner la malla en modo linea 
+//  geometria=new THREE.BoxGeometry(
+
+//     width=170,
+//     height=170,
+//     depht=50
+//  )
+
+
+
+    //   material = new THREE.LineBasicMaterial( { color:'green' } ); //linea
+	//material = new THREE.LineDashedMaterial( { color: 'yellow' } ); //linea
+    material=new THREE.MeshNormalMaterial({
+         color:'yellow',
+         wireframe:true,
+         wireframeLinewidth:5
+     })
+
+    //   malla=new THREE.Mesh(geometria,material)
+         malla=new THREE.Line(geometria,material)
+     
+      escena.add(malla)
+      
+      renderizado=new THREE.WebGLRenderer()
+      renderizado.setClearColor('black',1)
+      renderizado.setSize(window.innerWidth,window.innerHeight)
+      
+      document.body.appendChild(renderizado.domElement)
+       
+
+    }
+    inicializa()
+
+    function animando(){
+        requestAnimationFrame(animando)
+
+        malla.rotation.x+=0.012
+        malla.rotation.y+=0.012
+
+        renderizado.render(escena,camara)
+    
+    }
+    animando()
+       
+    
+    
+    </script>
+
+
+
+    
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="./three.min.js"></script>
+    <script>
+
+    let camara;
+    let escena;
+    let renderizado;
+    let geometria;
+    let geometria1;
+    let material1; 
+    let material;
+    let malla;
+    let malla1;
+
+
+    function inicializa(){
+   
+     camara=new THREE.PerspectiveCamera(100,window.innerWidth/innerHeight,1,1500)
+     camara.position.set(0,0,300)
+   
+     escena=new THREE.Scene()
+     escena.add(camara)
+
+     
+
+
+   
+
+    geometria=new THREE.BoxGeometry(
+        width=50,
+        height=50,
+        depth=200,
+        widthSegments=5,
+        heightSegments=5,
+        depthSegments=5
+    )
+
+    
+    geometria1=new THREE.BoxGeometry(
+        width=50,
+        height=50,
+        depth=200,
+        widthSegments=5,
+        heightSegments=5,
+        depthSegments=5
+    )
+    
+
+    
+    
+   
+
+
+     
+     material=new THREE.MeshNormalMaterial({
+         color:'yellow',
+         wireframe:true,
+         wireframeLinewidth:5
+     })
+
+      malla=new THREE.Mesh(geometria,material)
+     
+      
+     material1=new THREE.MeshNormalMaterial({
+         color:'yellow',
+         wireframe:true,
+         wireframeLinewidth:5
+     })
+
+      malla1=new THREE.Mesh(geometria1,material1)
+     
+      escena.add(malla)
+      escena.add(malla1)
+      
+      renderizado=new THREE.WebGLRenderer()
+      renderizado.setClearColor('black',1)
+      renderizado.setSize(window.innerWidth,window.innerHeight)
+      
+      document.body.appendChild(renderizado.domElement)
+   
+      
+
+    }
+    inicializa()
+
+    const caja=function(posX,posY,posZ,x,y,z){
+        this.posX=malla.position.x
+        this.posY=malla.position.y
+        this.posZ=malla.position.z
+        this.x=malla.width
+        this.y=malla.height
+        this.z=malla.depth
+
+        this.mueveX=function(){
+            malla.position.x+=1
+        }
+    }
+    const personaje=new caja()
+  
+    
+    const caja1=function(posX,posY,posZ,x,y,z){
+        this.posX=malla1.position.x
+        this.posY=malla1.position.y
+        this.posZ=malla1.position.z
+        this.x=malla1.width
+        this.y=malla1.height
+        this.z=malla1.depth
+
+        this.mueveX=function(){
+            malla1.position.x+=1
+        }
+    }
+    const personaje1=new caja1()
+  
+
+    
+    
+                 
+
+    window.addEventListener('keydown',(e)=>{
+         if(e.key==='d'){
+            personaje1.mueveX()
+         }
+    })
+
+      
+   function calculaColision(){
+  
+  if(Math.sqrt(Math.pow(malla1.position.x,2)-malla.position.x + 
+              Math.pow(malla1.position.y,2)-malla.position.y+
+              Math.pow(malla1.position.z,2)-malla.position.z)<50){
+                console.log('choque')
+                
+              }      
+    }
+  
+
+    function animando(){
+        requestAnimationFrame(animando)
+
+   
+       calculaColision()
+              
+        // malla.rotation.x+=0.012
+        // malla.rotation.y+=0.012
+
+        renderizado.render(escena,camara)
+    
+    }
+    animando()
+       
+    
+    
+    </script>
+
+
+
+    
+</body>
+</html>

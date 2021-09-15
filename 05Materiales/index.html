@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="./three.min.js"></script>
+    <script>
+
+    let camara;
+    let escena;
+    let renderizado;
+    let geometria;
+    let material; 
+    let malla;
+
+
+
+    function inicializa(){
+   
+     camara=new THREE.PerspectiveCamera(100,window.innerWidth/innerHeight,1,1500)
+     camara.position.set(76,189,400)
+   
+     escena=new THREE.Scene()
+     escena.add(camara)
+ 
+   
+    
+      //MATERIALES  ********************************************************
+    /*
+    
+    MeshBasicMaterial (no depende de la luz ambiente)
+    --------------------
+    MeshNormalMaterial (no depende de la luz ambiente)
+    -------------------
+    //sombreado duro no consume recursos a penas
+     material = new THREE.MeshNormalMaterial({shading: THREE.FlatShading}); 
+    //sombreado suave mas exigente graficamente
+    material = new THREE.MeshNormalMaterial({shading: THREE.SmoothShading});
+
+    MeshDepthMaterial(depende de la luz si no se ve negro)
+    -----------------
+    //sombras ligeras en gris, requiere luz profundidad partes mas al fondo oscuridad
+    
+    //negro sin luces, material brillante , refleja la luz
+    //material = new THREE.MeshPhongMaterial(); 
+	
+    //black sin luces, material no brillante , material plano sin brillos
+    //material = new THREE.MeshLambertMaterial();
+				
+	****************************************************************************************************/
+   
+    geometria=new THREE.BoxGeometry(200,200,200);
+       
+
+    
+   
+    material=new THREE.MeshLambertMaterial({
+       
+         color:'yellow',
+         wireframe:false,
+         wireframeLinewidth:5
+     }) 
+
+
+        // let luz=new THREE.AmbientLight('green');
+        // escena.add(luz)
+  
+     
+     let luz=new THREE.DirectionalLight('lightblue',2)
+                luz.castShadow = true;//proyecta sombra
+				luz.shadow.mapSize.width = 48; //ancho
+				luz.shadow.mapSize.height = 48; //alto
+				luz.position.set(0, 50, 90); //posicion
+				
+     escena.add(luz)
+  
+
+        malla=new THREE.Mesh(geometria,material)
+         //malla=new THREE.Line(geometria,material)
+     
+      escena.add(malla)
+      
+      renderizado=new THREE.WebGLRenderer()
+      renderizado.setClearColor('gray',1)
+      renderizado.setSize(window.innerWidth,window.innerHeight)
+      
+      document.body.appendChild(renderizado.domElement)
+
+  
+
+    }
+    inicializa()
+
+    function animando(){
+        requestAnimationFrame(animando)
+
+        malla.position.x+=0.012
+        malla.rotation.y+=0.012
+
+        renderizado.render(escena,camara)
+    
+    }
+    animando()
+       
+    
+    
+    </script>
+
+
+
+    
+</body>
+</html>
