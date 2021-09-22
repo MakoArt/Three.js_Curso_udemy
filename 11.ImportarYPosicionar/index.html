@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="./three.min.js" ></script>
+    <script src="./inflate.min.js" ></script>
+    <script src="./FBXLoader.js" ></script>
+
+
+    <div class="marco"></div>
+    <h2 style='margin-left:250px'>Figura Geométrica</h2>
+    
+ 
+ 
+    <script type="module">
+
+  
+    const marco=document.querySelector('.marco')
+    marco.style.marginLeft='200px'
+    marco.style.marginTop='100px'
+   
+ 
+
+    let camara;
+    let escena;
+    let renderizado;
+    let geometria;
+    let material; 
+    let malla;
+    let mixer;
+    let loader;
+    let object;
+
+    let action;
+    let personaje = new THREE.Object3D();
+
+
+    function inicializa(){
+     
+    //THREE es el namespace o espacio de nombre 
+   
+     camara=new THREE.PerspectiveCamera(40,3500/3500,1,1500)
+
+     camara.position.set(0,40,200)
+
+     escena=new THREE.Scene()
+
+     escena.add(camara)
+ 
+ 
+   
+    
+     material=new THREE.MeshBasicMaterial({
+         color:'red',
+         wireframe:false,
+         wireframeLinewidth:5
+     })
+
+  
+
+     //creamos la malla que llama en sus parametros(geometria,material)
+  
+      //añadimos a la escena la malla
+      
+      //vamos a renderizar  
+      //se dedica a borrar y a pintar el canvas o el lienzo 3d 
+      renderizado=new THREE.WebGLRenderer()
+      //color del renderizado (color,alfa)
+      renderizado.setClearColor('lightblue',1)
+      //tamaño del renderizado ancho y alto que tiene que ser lo que vamos a ver el tamaño que hemos puesto 
+      //en la camara 
+      renderizado.setSize(300,300)
+      //añadimos al body el renderer  
+      marco.appendChild(renderizado.domElement)
+    
+      //FBX ****************************************************************
+    
+      const fbxLoader = new THREE.FBXLoader()
+     fbxLoader.load(
+    'Torre.fbx',
+    (object) => {
+          
+        object.traverse(function (child) {
+                child=THREE.Mesh
+            if (( THREE.Mesh).isMesh) {
+                 (THREE.Mesh).material = material
+                if (( THREE.Mesh).material) {
+                    ((  THREE.Mesh). THREE.MeshBasicMaterial).transparent = false
+                }
+            }
+    
+        })
+                             
+        object.scale.set(0.1,0.1, 0.1)
+        object.rotation.set(9,14,9)
+        object.position.set(0,0,0)
+        function animate(){
+            requestAnimationFrame(animate)
+             
+            object.rotation.y+=0.03
+            // object.rotation.x+=0.03
+        
+        }
+        animate()
+       
+        escena.add(object)
+    },
+    (xhr) => {
+        console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+    },
+    (error) => {
+        console.log(error)
+    }
+)
+
+        
+	 
+let luces=new THREE.DirectionalLight('yellow',0.5)//(color,intensidad) //genera sombras
+            luces.position.set(0,10,100)//inicial de la luz
+            luces.target.position.set(0,0,0)//objetivo de la luz
+             // luces.shadow.mapSize.width=3000//ancho de sombra
+            // luces.shadow.mapSize.height=3000//alto de sombra
+            // luces.shadow.camera.far=92500//alcanze de la sombra
+            // luces.shadow.camera.left=-2000
+            // luces.shadow.camera.right=2000
+            // luces.shadow.camera.top=1500
+            // luces.shadow.camera.bottom=-2000
+            // luces.shadow.darkness=0.2
+  
+            escena.add(luces)
+            
+            let luzAmbiente=new THREE.AmbientLight('red',1)//no genera sombras
+            escena.add(luzAmbiente)
+            escena.fog=new THREE.FogExp2('white',0.0004)
+  
+            }
+  
+            //malla.castShadow=true
+             //luz va a proyectar sombras se pone sobre la malla
+             
+             //malla.receiveShadow=true
+             //va a recibir sombras se pone sobre la malla
+
+   
+   
+   
+    
+  
+  
+  
+
+    
+    inicializa()
+
+    function animando(){
+        requestAnimationFrame(animando)
+
+
+        renderizado.render(escena,camara)
+    
+    }
+    animando()
+       
+    
+    
+    </script>
+
+
+
+    
+</body>
+</html>
