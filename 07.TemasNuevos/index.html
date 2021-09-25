@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="./three.min.js"></script>
+    <script>
+
+    let camara;
+    let escena;
+    let renderizado;
+    let geometria;
+	let geometria2;
+    let material; 
+	let material2;
+    let material3
+    let malla;
+	let malla2;
+    let malla3
+    let cuadrado
+   
+
+
+    function inicializa(){
+   
+     camara=new THREE.PerspectiveCamera(100,window.innerWidth/innerHeight,1,1500)
+     camara.position.set(-450,150,500)
+    
+     
+   
+     escena=new THREE.Scene()
+     escena.add(camara)
+
+    
+    
+    geometria=new THREE.BoxGeometry(
+        width=200,
+        height=200,
+        depth=200,
+        widthSegments=5,
+        heightSegments=5,
+        depthSegments=5
+    )
+
+	geometria2=new THREE.BoxGeometry(
+        width=200,
+        height=200,
+        depth=200,
+        widthSegments=5,
+        heightSegments=5,
+        depthSegments=5
+    )
+	
+   
+
+
+
+
+
+
+    material=new THREE.MeshPhongMaterial({
+         color:'yellow',
+         wireframe:false,
+         
+     })
+
+	material2=new THREE.MeshPhongMaterial({
+		color:'yellow',
+         wireframe:false,
+	})
+
+       malla=new THREE.Mesh(geometria,material)
+	   malla.castShadow=true
+    
+	   
+	   malla2=new THREE.Mesh(geometria2,material2)
+	   malla2.position.x=-230
+	   malla2.position.y=-100
+	   malla2.receiveShadow=true
+   
+
+
+     
+      escena.add(malla)
+	  escena.add(malla2)
+
+      //recolocamos la camara 
+
+  
+
+      /**************************************************************/
+
+       cuadrado=new THREE.Shape([
+         new THREE.Vector2(100,100),
+         new THREE.Vector2(400,100),
+         new THREE.Vector2(400,400),
+         new THREE.Vector2(100,400)
+     ])
+     //extruimos la geometria 
+      geometria3=new THREE.ExtrudeGeometry(
+          cuadrado, 
+          {bevelEnabled:true,//biselado
+           amount:20 //cantidad de extruccion en pixeles
+          
+          }
+      );
+
+      material3=new THREE.MeshNormalMaterial({
+         color:'yellow',
+         wireframe:false,
+       })
+        // material2=THREE.FrontSide
+        // material2=THREE.BackSide
+        // material2=THREE.DoubleSide
+     
+
+        malla3=new THREE.Mesh(geometria3,material3)
+        malla3.position.x=-1000
+        malla3.position.y=0
+        // camara.lookAt(malla3.position)
+    
+
+     
+      escena.add(malla3)
+
+
+
+
+ console.log(malla3.position)
+
+
+      
+      /************************************************************************/
+      
+      renderizado=new THREE.WebGLRenderer()
+      renderizado.setClearColor('black',1)
+	  renderizado.shadowMap.enabled=true
+      renderizado.setSize(window.innerWidth,window.innerHeight)
+      
+      document.body.appendChild(renderizado.domElement)
+       
+        //luces
+
+		let luces=new THREE.DirectionalLight('green',1)//(color,intensidad)
+            
+		  luces.castShadow=true //luz va a proyectar sombras
+		  luces.shadow.mapSize.width=3000//ancho de sombra
+		  luces.shadow.mapSize.height=3000//alto de sombra
+		  luces.position.set(40,40,0)//posicion 
+		  luces.shadow.camera.far=92500//alcanze de la sombra
+		  luces.shadow.camera.left=-2000
+		  luces.shadow.camera.right=2000
+		  luces.shadow.camera.top=1500
+		  luces.shadow.camera.bottom=-2000
+		  luces.shadow.darkness=0.2
+
+		  escena.add(luces)
+          
+		  let luzAmbiente=new THREE.AmbientLight('green',0.03)
+		  escena.add(luzAmbiente)
+		  
+          
+          escena.fog=new THREE.FogExp2('white',0.0004)
+
+
+    }
+    inicializa()
+		  //NUEVAS LUCES 
+        //GENERAN SOMBRAS 
+		
+//Luz ambiental -- THREE.AmbientLight(color,intensidad(0 a 1))
+
+//Luz direccional--THREE.DirectionalLight(color,intensidad(0 a 1))
+//la usamos con la función  para que apunte a un objeto en particular
+
+//Luz  sol --Nuevas luces THREE.HemisphereLight(cielocolor,reflejadocolor,intensidad(0 al 1))
+
+//luz bombilla--THREE.PointLight(color,intensidad,distancia,decaimiento)
+
+//luz foco arriba--THREE.spotLight(color,intensidad=1,distancia=8,angulo=Math.PI/3,penumbra=1,decaimiento=1)
+//en foco tenemos que decirle la direccion a diferencia de bombilla  
+
+//SOMBRAS (configurando)
+//se activan en 3 sitios: renderer, luz y el objeto
+ //en el renderer tenemos que poner    renderer.shadowMap.enabled=true
+ //en las luces                        directionalLight.castShadow=true 
+ //en el objeto                        cube.castShadow=true 
+ //en el objeto                        cube.receiveShadow=true
+ //solo los materiales lambert y phong se oscurecen por medio de las ombra
+
+ 
+ //FUNCIÓN lookAt() para la camara 
+
+
+ //side de material 
+ //backside 
+ //doubleside 
+ //frontside
+
+
+//CLOCK 
+ //es como un reloj que hace que el requestAnimationFrame funcione correctamente  
+//con el metodo let delta=clock.getDelta()  y delta*3  3 unidades por segundo  
+
+
+
+
+
+
+ let clock=new THREE.Clock();
+
+    function animando(){
+        requestAnimationFrame(animando)
+    
+        let delta=clock.getDelta()
+       
+        malla2.rotation.x+=delta*2
+        malla.rotation.y+=delta*2
+        malla3.rotation.y+=delta*2
+
+        renderizado.render(escena,camara)
+    
+    }
+    animando()
+       
+    
+    
+    </script>
+
+
+
+    
+</body>
+</html>
