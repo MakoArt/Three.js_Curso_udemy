@@ -88,7 +88,14 @@ let luzAmbiente=new THREE.AmbientLight('white',1)
             escena.add(luzAmbiente)
           
   
+               
+            //eventos 
             
+            document.addEventListener('mousemove',()=>{
+            malla.rotation.y+=0.2
+            
+            })
+
   
   
       }
