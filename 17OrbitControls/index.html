@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <script src="./three.min.js" ></script>
+    <script src="./GLTFLoader.js" ></script>
+    <script src="./OrbitControls.js"></script>
+    
+ 
+ 
+    <script type="module">
+
+   
+    let camara;
+    let escena;
+    let renderizado;
+    let geometria;
+    let material; 
+    let malla;
+    let mixer;
+    let loader;
+
+    let action;
+    let personaje = new THREE.Object3D();
+
+
+    function inicializa(){
+     
+
+     //camara
+     camara=new THREE.PerspectiveCamera(40,window.innerWidth/innerHeight,1,1500)
+     camara.position.set(0.3,10,5)
+ 
+     
+     //escena
+     escena=new THREE.Scene()
+     escena.add(camara)
+
+    //GLTF ****************************************************************
+       
+      const loader= new THREE.GLTFLoader()
+      loader.load('./wraith.glb',function(glb){
+          
+         console.log(glb)
+          malla=glb.scene
+          malla.scale.set(0.03,0.03,0.05)
+          malla.position.set(0,-1,0) //tocar posicion en y 
+          escena.add(malla)
+
+      },function(xhr){
+          console.log((xhr.loaded/xhr.total*100)+"% loaded")
+      },function(error){
+          console.log('Ha ocurrido un error')
+     })
+   
+  
+    //  geometria y material
+    //  geometria=new THREE.BoxGeometry(1,1,1)
+    //  material=new THREE.MeshBasicMaterial({
+    //      color:0x00ff00,
+    //  })
+     //unimos en variable materialMalla(geometria,material)
+     const materialMalla= new THREE.Mesh(geometria,material)
+     escena.add(materialMalla)
+
+      
+     //renderizado 
+      renderizado=new THREE.WebGLRenderer()
+      renderizado.setClearColor('lightblue',1)
+      renderizado.setSize(window.innerWidth,window.innerHeight)
+      document.body.appendChild(renderizado.domElement)
+      
+      let controls=new THREE.OrbitControls(camara,renderizado.domElement);
+      controls.minDistance=3; 
+      controls.maxDistance=100; 
+      controls.enableZoom=true;
+
+      //botón derecho del ratón paneo 
+      //botón izquierdo rotamos 
+
+    
+  
+      
+    
+        
+	 
+let luces=new THREE.DirectionalLight(0xffffff,1)//(color,intensidad)
+            
+     
+            luces.position.set(10,-4,0)//posicion 
+            escena.add(luces)
+            
+let luzAmbiente=new THREE.AmbientLight('white',1)
+            escena.add(luzAmbiente)
+          
+  
+               
+   
+
+  
+  
+      }
+  
+   inicializa()
+
+    function animando(){
+        requestAnimationFrame(animando)
+
+         //malla.rotation.x+=0.012
+        //malla.rotation.y+=0.012
+
+        renderizado.render(escena,camara)
+    
+    }
+    animando()
+       
+    
+    
+    </script>
+
+
+
+    
+</body>
+</html>
